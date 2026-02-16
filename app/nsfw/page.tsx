@@ -4,7 +4,7 @@
 // NSFW Page - Age-Gated Content
 // ============================================
 
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, Suspense } from 'react'; // Added Suspense
 import { useSearchParams } from 'next/navigation';
 import { WaifuImage, NsfwCategory } from '@/types';
 import { fetchMultipleImages } from '@/lib/api';
@@ -14,7 +14,21 @@ import { cn } from '@/lib/utils';
 import { ImageGallery, AgeGate } from '@/components';
 import { useNsfw, useAnalytics } from '@/contexts';
 
+// --- 1. The Wrapper Component (Fixes the build error) ---
 export default function NsfwPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-zinc-950">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-red-500"></div>
+      </div>
+    }>
+      <NSFWContent />
+    </Suspense>
+  );
+}
+
+// --- 2. The Actual Content Logic ---
+function NSFWContent() {
   const searchParams = useSearchParams();
   const initialCategory = searchParams.get('category') as NsfwCategory | null;
   
@@ -79,7 +93,7 @@ export default function NsfwPage() {
       setHasMore(true);
       loadImages(true);
     }
-  }, [hasConsent, selectedCategory]);
+  }, [hasConsent, selectedCategory, loadImages]); // Added loadImages to dependency array
 
   const handleLoadMore = useCallback(() => {
     if (!loading && hasMore) {
