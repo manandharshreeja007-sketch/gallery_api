@@ -1,0 +1,22 @@
+{
+  "name": "Waifu Gallery",
+  "short_name": "WaifuGallery",
+  "description": "Your ultimate destination for beautiful anime artwork. Browse thousands of curated anime images with AI-powered search.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#09090b",
+  "theme_color": "#ec4899",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "categories": ["entertainment", "lifestyle", "social"],
+  "lang": "en",
+  "dir": "ltr"
+}
