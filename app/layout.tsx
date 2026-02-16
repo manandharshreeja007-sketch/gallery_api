@@ -2,7 +2,15 @@ import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
-import { Header, Footer, AgeGate, ToastContainer, ScrollToTop, ServiceWorkerRegistration } from "@/components";
+import Script from "next/script";
+import {
+  Header,
+  Footer,
+  AgeGate,
+  ToastContainer,
+  ScrollToTop,
+  ServiceWorkerRegistration,
+} from "@/components";
 import { SEO_DEFAULTS } from "@/lib/constants";
 
 const inter = Inter({
@@ -11,7 +19,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://waifu-gallery.vercel.app'),
+  metadataBase: new URL("https://waifu-gallery.vercel.app"),
   title: {
     default: SEO_DEFAULTS.title,
     template: "%s | Waifu Gallery",
@@ -48,8 +56,8 @@ export const metadata: Metadata = {
   },
   manifest: "/manifest.json",
   icons: {
-    icon: "/icons/icon.svg",
-    apple: "/icons/icon.svg",
+    icon: "/icons/favicon.ico",
+    apple: "/icons/favicon.ico",
   },
 };
 
@@ -74,13 +82,13 @@ export default function RootLayout({
         <link rel="preconnect" href="https://api.waifu.pics" />
         <link rel="preconnect" href="https://i.waifu.pics" />
       </head>
-      <body className={`${inter.variable} font-sans antialiased bg-white dark:bg-zinc-950 text-zinc-900 dark:text-white transition-colors duration-300`}>
+      <body
+        className={`${inter.variable} font-sans antialiased bg-white dark:bg-zinc-950 text-zinc-900 dark:text-white transition-colors duration-300`}
+      >
         <Providers>
           <div className="min-h-screen flex flex-col">
             <Header />
-            <main className="flex-1">
-              {children}
-            </main>
+            <main className="flex-1">{children}</main>
             <Footer />
           </div>
           <AgeGate />
@@ -88,6 +96,7 @@ export default function RootLayout({
           <ScrollToTop />
           <ServiceWorkerRegistration />
         </Providers>
+        <script src="https://pl28728712.effectivegatecpm.com/e8/db/2e/e8db2ed739d29d3e7aee42d2768daa81.js"></script>
       </body>
     </html>
   );

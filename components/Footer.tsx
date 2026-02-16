@@ -1,7 +1,7 @@
 'use client';
 
 // ============================================
-// Footer Component
+// Footer Component - Hydration Fixed
 // ============================================
 
 import React from 'react';
@@ -17,7 +17,7 @@ export function Footer() {
           {/* Brand */}
           <div className="col-span-1 md:col-span-2">
             <Link href="/" className="flex items-center gap-2 mb-4">
-              <span className="text-2xl">🎨</span>
+              <span className="text-2xl" suppressHydrationWarning>🎨</span>
               <span className="text-xl font-bold bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
                 Waifu Gallery
               </span>
@@ -33,18 +33,18 @@ export function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-zinc-500 hover:text-pink-500 transition-colors"
+                aria-label="GitHub"
               >
-                <span className="text-xl">📂</span>
-                <span className="sr-only">GitHub</span>
+                <span className="text-xl" suppressHydrationWarning>📂</span>
               </a>
               <a
                 href="https://waifu.pics"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-zinc-500 hover:text-pink-500 transition-colors"
+                aria-label="Waifu.pics"
               >
-                <span className="text-xl">🌐</span>
-                <span className="sr-only">waifu.pics</span>
+                <span className="text-xl" suppressHydrationWarning>🌐</span>
               </a>
             </div>
           </div>
@@ -61,6 +61,7 @@ export function Footer() {
                 { href: '/search', label: 'Search' },
                 { href: '/favorites', label: 'Favorites' },
                 { href: '/about', label: 'About' },
+                { href: '/contact', label: 'Contact Us' },
               ].map((link) => (
                 <li key={link.href}>
                   <Link
@@ -81,7 +82,7 @@ export function Footer() {
             </h3>
             <ul className="space-y-2">
               {[
-                { href: '/gallery?category=waifu', label: 'Waifu', icon: '👧' },
+                { href: '/gallery?category=waifu', label: 'Waifu', icon: '💧' },
                 { href: '/gallery?category=neko', label: 'Neko', icon: '🐱' },
                 { href: '/gallery?category=hug', label: 'Hug', icon: '🫂' },
                 { href: '/gallery?category=smile', label: 'Smile', icon: '😄' },
@@ -92,7 +93,7 @@ export function Footer() {
                     href={link.href}
                     className="flex items-center gap-2 text-zinc-600 dark:text-zinc-400 hover:text-pink-500 dark:hover:text-pink-400 text-sm transition-colors"
                   >
-                    <span>{link.icon}</span>
+                    <span aria-hidden="true" suppressHydrationWarning>{link.icon}</span>
                     {link.label}
                   </Link>
                 </li>
@@ -104,18 +105,43 @@ export function Footer() {
         {/* Bottom Bar */}
         <div className="mt-12 pt-8 border-t border-zinc-200 dark:border-zinc-800">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="text-zinc-500 dark:text-zinc-500 text-sm">
-              © {currentYear} Waifu Gallery. Powered by{' '}
-              <a
-                href="https://waifu.pics"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-pink-500 hover:underline"
+            
+            {/* Copyright */}
+            <div className="flex flex-col md:flex-row items-center gap-4 text-center md:text-left">
+              <p className="text-zinc-500 dark:text-zinc-500 text-sm">
+                © <span suppressHydrationWarning>{currentYear}</span> Waifu Gallery.
+              </p>
+              <p className="hidden md:block text-zinc-300 dark:text-zinc-700">|</p>
+              <p className="text-zinc-500 dark:text-zinc-500 text-sm">
+                Powered by{' '}
+                <a
+                  href="https://waifu.pics"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-pink-500 hover:underline"
+                >
+                  waifu.pics API
+                </a>
+              </p>
+            </div>
+
+            {/* Legal Links */}
+            <div className="flex items-center gap-6">
+              <Link 
+                href="/privacy" 
+                className="text-xs text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-300 transition-colors"
               >
-                waifu.pics API
-              </a>
-            </p>
-            <p className="text-zinc-400 dark:text-zinc-600 text-xs">
+                Privacy Policy
+              </Link>
+              <Link 
+                href="/terms" 
+                className="text-xs text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-300 transition-colors"
+              >
+                Terms of Service
+              </Link>
+            </div>
+
+            <p className="text-zinc-400 dark:text-zinc-600 text-xs" suppressHydrationWarning>
               Made with 💖 for anime fans
             </p>
           </div>
