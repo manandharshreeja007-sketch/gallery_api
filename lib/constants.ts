@@ -136,10 +136,23 @@ export const STORAGE_KEYS = {
 
 // SEO Defaults
 export const SEO_DEFAULTS = {
-  title: 'Waifu Gallery - Anime Image Collection',
-  description: 'Discover beautiful anime-style images with our AI-powered gallery. Browse waifus, nekos, and more with infinite scroll, semantic search, and personalized recommendations.',
-  keywords: ['anime', 'waifu', 'neko', 'gallery', 'images', 'kawaii', 'cute', 'manga'],
-  url: 'https://waifu-gallery.vercel.app',
+  title: 'Waifu Gallery - Free Anime Image Gallery & AI Search',
+  description: 'Discover and collect beautiful anime-style images with AI-powered search. Browse 30+ categories: waifu, neko, hug, smile and more. Free, fast, and beautiful.',
+  keywords: [
+    'anime images',
+    'waifu gallery',
+    'neko pictures',
+    'anime art',
+    'manga images',
+    'kawaii pictures',
+    'anime collection',
+    'anime image search',
+    'AI anime search',
+    'otaku gallery',
+    'anime wallpapers',
+    'free anime images',
+  ],
+  url: 'https://waifugallery.netlify.app',
   image: '/og-image.png',
 };
 

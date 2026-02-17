@@ -1,30 +1,36 @@
-'use client';
+"use client";
 
 // ============================================
 // Favorites Page
 // ============================================
 
-import React, { useState, useMemo } from 'react';
-import { WaifuImage, Category } from '@/types';
-import { CATEGORY_INFO } from '@/lib/constants';
-import { cn } from '@/lib/utils';
-import { ImageCard, ImageModal } from '@/components';
-import { useFavorites, useToast } from '@/contexts';
+import React, { useState, useMemo } from "react";
+import { WaifuImage, Category } from "@/types";
+import { CATEGORY_INFO } from "@/lib/constants";
+import { cn } from "@/lib/utils";
+import { ImageCard, ImageModal } from "@/components";
+import { useFavorites, useToast } from "@/contexts";
+import { NativeBannerAd } from "@/components/ads";
 
 export default function FavoritesPage() {
-  const { favorites, clearAllFavorites, exportFavorites, importFavorites } = useFavorites();
+  const { favorites, clearAllFavorites, exportFavorites, importFavorites } =
+    useFavorites();
   const toast = useToast();
-  
-  const [selectedCategory, setSelectedCategory] = useState<Category | 'all'>('all');
-  const [sortBy, setSortBy] = useState<'newest' | 'oldest' | 'category'>('newest');
+
+  const [selectedCategory, setSelectedCategory] = useState<Category | "all">(
+    "all",
+  );
+  const [sortBy, setSortBy] = useState<"newest" | "oldest" | "category">(
+    "newest",
+  );
   const [selectedImage, setSelectedImage] = useState<WaifuImage | null>(null);
   const [showImportModal, setShowImportModal] = useState(false);
-  const [importData, setImportData] = useState('');
+  const [importData, setImportData] = useState("");
 
   // Get unique categories from favorites
   const categories = useMemo(() => {
     const cats = new Set<Category>();
-    favorites.forEach(fav => {
+    favorites.forEach((fav) => {
       if (fav.image.category) {
         cats.add(fav.image.category as Category);
       }
@@ -35,59 +41,65 @@ export default function FavoritesPage() {
   // Filter and sort favorites
   const displayedFavorites = useMemo(() => {
     let filtered = [...favorites];
-    
+
     // Filter by category
-    if (selectedCategory !== 'all') {
-      filtered = filtered.filter(fav => fav.image.category === selectedCategory);
+    if (selectedCategory !== "all") {
+      filtered = filtered.filter(
+        (fav) => fav.image.category === selectedCategory,
+      );
     }
-    
+
     // Sort
     switch (sortBy) {
-      case 'newest':
+      case "newest":
         filtered.sort((a, b) => b.addedAt - a.addedAt);
         break;
-      case 'oldest':
+      case "oldest":
         filtered.sort((a, b) => a.addedAt - b.addedAt);
         break;
-      case 'category':
+      case "category":
         filtered.sort((a, b) => {
-          const catA = a.image.category || '';
-          const catB = b.image.category || '';
+          const catA = a.image.category || "";
+          const catB = b.image.category || "";
           return catA.localeCompare(catB);
         });
         break;
     }
-    
+
     return filtered;
   }, [favorites, selectedCategory, sortBy]);
 
   const handleExport = () => {
     const json = exportFavorites();
-    const blob = new Blob([json], { type: 'application/json' });
+    const blob = new Blob([json], { type: "application/json" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
     a.download = `waifu-gallery-favorites-${Date.now()}.json`;
     a.click();
     URL.revokeObjectURL(url);
-    toast.success('Favorites exported successfully!');
+    toast.success("Favorites exported successfully!");
   };
 
   const handleImport = () => {
     const result = importFavorites(importData);
     if (result) {
-      toast.success('Favorites imported successfully!');
+      toast.success("Favorites imported successfully!");
       setShowImportModal(false);
-      setImportData('');
+      setImportData("");
     } else {
-      toast.error('Failed to import favorites. Check the format.');
+      toast.error("Failed to import favorites. Check the format.");
     }
   };
 
   const handleClearAll = () => {
-    if (window.confirm('Are you sure you want to clear all favorites? This cannot be undone.')) {
+    if (
+      window.confirm(
+        "Are you sure you want to clear all favorites? This cannot be undone.",
+      )
+    ) {
       clearAllFavorites();
-      toast.info('All favorites cleared');
+      toast.info("All favorites cleared");
     }
   };
 
@@ -100,9 +112,13 @@ export default function FavoritesPage() {
             ❤️ My Favorites
           </h1>
           <p className="text-zinc-600 dark:text-zinc-400">
-            {favorites.length} saved {favorites.length === 1 ? 'image' : 'images'}
+            {favorites.length} saved{" "}
+            {favorites.length === 1 ? "image" : "images"}
           </p>
         </div>
+
+        {/* Native Ad - single, unobtrusive */}
+        <NativeBannerAd />
 
         {favorites.length > 0 ? (
           <>
@@ -112,7 +128,9 @@ export default function FavoritesPage() {
                 {/* Category Filter */}
                 <select
                   value={selectedCategory}
-                  onChange={(e) => setSelectedCategory(e.target.value as Category | 'all')}
+                  onChange={(e) =>
+                    setSelectedCategory(e.target.value as Category | "all")
+                  }
                   className="px-4 py-2 rounded-lg bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-pink-500"
                 >
                   <option value="all">All Categories</option>
@@ -129,7 +147,11 @@ export default function FavoritesPage() {
                 {/* Sort */}
                 <select
                   value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value as 'newest' | 'oldest' | 'category')}
+                  onChange={(e) =>
+                    setSortBy(
+                      e.target.value as "newest" | "oldest" | "category",
+                    )
+                  }
                   className="px-4 py-2 rounded-lg bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-pink-500"
                 >
                   <option value="newest">Newest First</option>
@@ -144,8 +166,18 @@ export default function FavoritesPage() {
                   onClick={handleExport}
                   className="inline-flex items-center gap-2 px-4 py-2 text-sm bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-colors"
                 >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
+                    />
                   </svg>
                   Export
                 </button>
@@ -155,8 +187,18 @@ export default function FavoritesPage() {
                   onClick={() => setShowImportModal(true)}
                   className="inline-flex items-center gap-2 px-4 py-2 text-sm bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-colors"
                 >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                    />
                   </svg>
                   Import
                 </button>
@@ -166,8 +208,18 @@ export default function FavoritesPage() {
                   onClick={handleClearAll}
                   className="inline-flex items-center gap-2 px-4 py-2 text-sm bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors"
                 >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                    />
                   </svg>
                   Clear All
                 </button>
@@ -179,24 +231,32 @@ export default function FavoritesPage() {
               <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3 mb-8">
                 {categories.slice(0, 6).map((cat) => {
                   const info = CATEGORY_INFO[cat];
-                  const count = favorites.filter(f => f.image.category === cat).length;
+                  const count = favorites.filter(
+                    (f) => f.image.category === cat,
+                  ).length;
                   return (
                     <button
                       key={cat}
                       onClick={() => setSelectedCategory(cat)}
                       className={cn(
-                        'flex flex-col items-center p-3 rounded-xl transition-colors',
+                        "flex flex-col items-center p-3 rounded-xl transition-colors",
                         selectedCategory === cat
-                          ? 'bg-pink-500 text-white'
-                          : 'bg-zinc-100 dark:bg-zinc-800/50 hover:bg-zinc-200 dark:hover:bg-zinc-800'
+                          ? "bg-pink-500 text-white"
+                          : "bg-zinc-100 dark:bg-zinc-800/50 hover:bg-zinc-200 dark:hover:bg-zinc-800",
                       )}
                     >
                       <span className="text-xl">{info?.icon}</span>
-                      <span className="text-xs mt-1 font-medium">{info?.name}</span>
-                      <span className={cn(
-                        'text-xs mt-0.5',
-                        selectedCategory === cat ? 'text-pink-100' : 'text-zinc-500'
-                      )}>
+                      <span className="text-xs mt-1 font-medium">
+                        {info?.name}
+                      </span>
+                      <span
+                        className={cn(
+                          "text-xs mt-0.5",
+                          selectedCategory === cat
+                            ? "text-pink-100"
+                            : "text-zinc-500",
+                        )}
+                      >
                         {count} saved
                       </span>
                     </button>
@@ -216,11 +276,11 @@ export default function FavoritesPage() {
               ))}
             </div>
 
-            {displayedFavorites.length === 0 && selectedCategory !== 'all' && (
+            {displayedFavorites.length === 0 && selectedCategory !== "all" && (
               <div className="text-center py-20">
                 <p className="text-zinc-500">No favorites in this category</p>
                 <button
-                  onClick={() => setSelectedCategory('all')}
+                  onClick={() => setSelectedCategory("all")}
                   className="mt-4 text-pink-500 hover:text-pink-600"
                 >
                   View all favorites
@@ -236,7 +296,8 @@ export default function FavoritesPage() {
               No favorites yet
             </h2>
             <p className="text-zinc-600 dark:text-zinc-400 mb-6 max-w-md mx-auto">
-              Start exploring and save images you love by clicking the heart icon!
+              Start exploring and save images you love by clicking the heart
+              icon!
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <a href="/gallery" className="btn-primary">
@@ -274,14 +335,14 @@ export default function FavoritesPage() {
               <textarea
                 value={importData}
                 onChange={(e) => setImportData(e.target.value)}
-                placeholder='Paste JSON data here...'
+                placeholder="Paste JSON data here..."
                 className="w-full h-40 px-4 py-3 rounded-xl bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-white text-sm font-mono resize-none focus:outline-none focus:ring-2 focus:ring-pink-500"
               />
               <div className="flex justify-end gap-3 mt-4">
                 <button
                   onClick={() => {
                     setShowImportModal(false);
-                    setImportData('');
+                    setImportData("");
                   }}
                   className="btn-secondary"
                 >

@@ -12,6 +12,8 @@ import {
   ServiceWorkerRegistration,
 } from "@/components";
 import { SEO_DEFAULTS } from "@/lib/constants";
+import { WebSiteJsonLd, OrganizationJsonLd } from "@/components/seo/JsonLd";
+import { PopunderAd, SocialBarAd } from "@/components/ads";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -19,7 +21,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://waifu-gallery.vercel.app"),
+  metadataBase: new URL("https://waifugallery.netlify.app"),
   title: {
     default: SEO_DEFAULTS.title,
     template: "%s | Waifu Gallery",
@@ -53,11 +55,24 @@ export const metadata: Metadata = {
   robots: {
     index: true,
     follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large" as const,
+      "max-snippet": -1,
+    },
   },
   manifest: "/manifest.json",
   icons: {
     icon: "/icons/favicon.ico",
     apple: "/icons/favicon.ico",
+  },
+  applicationName: "Waifu Gallery",
+  appleWebApp: {
+    capable: true,
+    title: "Waifu Gallery",
+    statusBarStyle: "default",
   },
 };
 
@@ -69,6 +84,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
+  viewportFit: "cover",
 };
 
 export default function RootLayout({
@@ -81,6 +97,8 @@ export default function RootLayout({
       <head>
         <link rel="preconnect" href="https://api.waifu.pics" />
         <link rel="preconnect" href="https://i.waifu.pics" />
+        <WebSiteJsonLd />
+        <OrganizationJsonLd />
       </head>
       <body
         className={`${inter.variable} font-sans antialiased bg-white dark:bg-zinc-950 text-zinc-900 dark:text-white transition-colors duration-300`}
@@ -95,8 +113,9 @@ export default function RootLayout({
           <ToastContainer />
           <ScrollToTop />
           <ServiceWorkerRegistration />
+          <PopunderAd />
+          <SocialBarAd />
         </Providers>
-        <script src="https://pl28728712.effectivegatecpm.com/e8/db/2e/e8db2ed739d29d3e7aee42d2768daa81.js"></script>
       </body>
     </html>
   );

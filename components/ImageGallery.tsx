@@ -1,15 +1,17 @@
-'use client';
+"use client";
 
 // ============================================
 // ImageGallery Component
 // ============================================
 
-import React, { useState, useCallback, useMemo } from 'react';
-import { WaifuImage, Category, ContentType } from '@/types';
-import { ImageCard, ImageCardSkeleton } from './ImageCard';
-import { ImageModal } from './ImageModal';
-import { cn } from '@/lib/utils';
-import { useInfiniteScroll } from '@/hooks';
+import React, { useState, useCallback, useMemo } from "react";
+import { WaifuImage, Category, ContentType } from "@/types";
+import { ImageCard, ImageCardSkeleton } from "./ImageCard";
+import { ImageModal } from "./ImageModal";
+import { cn } from "@/lib/utils";
+import { useInfiniteScroll } from "@/hooks";
+import { ADS_CONFIG } from "@/lib/ads.config";
+import { NativeBannerAd } from "./ads/NativeBannerAd";
 
 interface ImageGalleryProps {
   images: WaifuImage[];
@@ -20,6 +22,7 @@ interface ImageGalleryProps {
   showCategory?: boolean;
   showCaption?: boolean;
   emptyMessage?: string;
+  showInFeedAds?: boolean;
 }
 
 export function ImageGallery({
@@ -30,7 +33,8 @@ export function ImageGallery({
   columns = 4,
   showCategory = true,
   showCaption = true,
-  emptyMessage = 'No images found',
+  emptyMessage = "No images found",
+  showInFeedAds = false,
 }: ImageGalleryProps) {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
@@ -40,7 +44,7 @@ export function ImageGallery({
         onLoadMore();
       }
     },
-    { enabled: hasMore && !loading && !!onLoadMore }
+    { enabled: hasMore && !loading && !!onLoadMore },
   );
 
   const handleImageClick = useCallback((index: number) => {
@@ -57,43 +61,59 @@ export function ImageGallery({
 
   const handleNext = useCallback(() => {
     setSelectedIndex((prev) =>
-      prev !== null && prev < images.length - 1 ? prev + 1 : prev
+      prev !== null && prev < images.length - 1 ? prev + 1 : prev,
     );
   }, [images.length]);
 
   const selectedImage = selectedIndex !== null ? images[selectedIndex] : null;
 
   const columnClasses = {
-    2: 'grid-cols-2',
-    3: 'grid-cols-2 sm:grid-cols-3',
-    4: 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4',
-    5: 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5',
-    6: 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6',
+    2: "grid-cols-2",
+    3: "grid-cols-2 sm:grid-cols-3",
+    4: "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4",
+    5: "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5",
+    6: "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6",
   };
 
   if (!loading && images.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-center">
         <span className="text-6xl mb-4">🎨</span>
-        <p className="text-zinc-500 dark:text-zinc-400 text-lg">{emptyMessage}</p>
+        <p className="text-zinc-500 dark:text-zinc-400 text-lg">
+          {emptyMessage}
+        </p>
       </div>
     );
   }
 
   return (
     <>
-      <div className={cn('grid gap-4', columnClasses[columns])}>
+      <div
+        className={cn("grid gap-2 sm:gap-3 lg:gap-4", columnClasses[columns])}
+      >
         {images.map((image, index) => (
-          <ImageCard
-            key={`${image.id}-${index}`}
-            image={image}
-            onClick={() => handleImageClick(index)}
-            showCategory={showCategory}
-            showCaption={showCaption}
-            priority={index < 8}
-          />
+          <React.Fragment key={`${image.id}-${index}`}>
+            <ImageCard
+              image={image}
+              onClick={() => handleImageClick(index)}
+              showCategory={showCategory}
+              showCaption={showCaption}
+              priority={index < 8}
+            />
+            {/* In-feed NativeBannerAd every N images */}
+            {showInFeedAds &&
+              ADS_CONFIG.enabled &&
+              ADS_CONFIG.nativeBanner.enabled &&
+              (index + 1) % ADS_CONFIG.nativeBanner.inFeedEveryN === 0 &&
+              images.length >
+                ADS_CONFIG.nativeBanner.minImagesBeforeFirstAd && (
+                <div className="col-span-2 sm:col-span-3 lg:col-span-4">
+                  <NativeBannerAd />
+                </div>
+              )}
+          </React.Fragment>
         ))}
-        
+
         {/* Loading Skeletons */}
         {loading &&
           Array.from({ length: columns * 2 }).map((_, i) => (
@@ -103,11 +123,23 @@ export function ImageGallery({
 
       {/* Load More Trigger */}
       {hasMore && !loading && onLoadMore && (
-        <div ref={loadMoreRef} className="h-20 flex items-center justify-center">
+        <div
+          ref={loadMoreRef}
+          className="h-20 flex items-center justify-center"
+        >
           <div className="flex items-center gap-2 text-zinc-400">
-            <div className="w-2 h-2 bg-pink-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-            <div className="w-2 h-2 bg-pink-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-            <div className="w-2 h-2 bg-pink-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+            <div
+              className="w-2 h-2 bg-pink-500 rounded-full animate-bounce"
+              style={{ animationDelay: "0ms" }}
+            />
+            <div
+              className="w-2 h-2 bg-pink-500 rounded-full animate-bounce"
+              style={{ animationDelay: "150ms" }}
+            />
+            <div
+              className="w-2 h-2 bg-pink-500 rounded-full animate-bounce"
+              style={{ animationDelay: "300ms" }}
+            />
           </div>
         </div>
       )}
@@ -140,7 +172,7 @@ export function MasonryGallery({
   hasMore = true,
   onLoadMore,
   columns = 4,
-}: Omit<ImageGalleryProps, 'showCategory' | 'showCaption' | 'emptyMessage'>) {
+}: Omit<ImageGalleryProps, "showCategory" | "showCaption" | "emptyMessage">) {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
   const { loadMoreRef } = useInfiniteScroll(
@@ -149,7 +181,7 @@ export function MasonryGallery({
         onLoadMore();
       }
     },
-    { enabled: hasMore && !loading && !!onLoadMore }
+    { enabled: hasMore && !loading && !!onLoadMore },
   );
 
   // Distribute images into columns
@@ -171,7 +203,7 @@ export function MasonryGallery({
 
   const handleNext = useCallback(() => {
     setSelectedIndex((prev) =>
-      prev !== null && prev < images.length - 1 ? prev + 1 : prev
+      prev !== null && prev < images.length - 1 ? prev + 1 : prev,
     );
   }, [images.length]);
 

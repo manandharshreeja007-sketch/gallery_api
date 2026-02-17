@@ -30,7 +30,7 @@ export function Header() {
     <>
       <header
         className={cn(
-          "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
+          "fixed top-0 left-0 right-0 z-50 transition-all duration-300 pt-safe",
           isScrolled
             ? "bg-white/80 dark:bg-zinc-900/80 backdrop-blur-lg shadow-lg"
             : "bg-transparent",
@@ -97,7 +97,7 @@ export function Header() {
               <button
                 onClick={toggleTheme}
                 className={cn(
-                  "p-2 rounded-lg transition-all duration-200",
+                  "min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg transition-all duration-200",
                   "hover:bg-zinc-100 dark:hover:bg-zinc-800",
                   "focus:outline-none focus:ring-2 focus:ring-pink-500",
                 )}
@@ -112,7 +112,7 @@ export function Header() {
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 className={cn(
-                  "md:hidden p-2 rounded-lg transition-all duration-200",
+                  "md:hidden min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg transition-all duration-200",
                   "hover:bg-zinc-100 dark:hover:bg-zinc-800",
                   "focus:outline-none focus:ring-2 focus:ring-pink-500",
                 )}

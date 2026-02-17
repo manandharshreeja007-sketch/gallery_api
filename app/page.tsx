@@ -1,18 +1,24 @@
-'use client';
+"use client";
 
 // ============================================
 // Home Page
 // ============================================
 
-import React, { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { WaifuImage, Category } from '@/types';
-import { fetchImagesFromCategories } from '@/lib/api';
-import { enhanceImagesWithAI } from '@/lib/ai';
-import { FEATURED_CATEGORIES, CATEGORY_INFO } from '@/lib/constants';
-import { cn, shuffleArray } from '@/lib/utils';
-import { ImageGallery, SearchBar, CategoryShowcase, RecommendationsSection } from '@/components';
-import { useAnalytics } from '@/contexts';
+import React, { useEffect, useState } from "react";
+import Link from "next/link";
+import { WaifuImage, Category } from "@/types";
+import { fetchImagesFromCategories } from "@/lib/api";
+import { enhanceImagesWithAI } from "@/lib/ai";
+import { FEATURED_CATEGORIES, CATEGORY_INFO } from "@/lib/constants";
+import { cn, shuffleArray } from "@/lib/utils";
+import {
+  ImageGallery,
+  SearchBar,
+  CategoryShowcase,
+  RecommendationsSection,
+} from "@/components";
+import { useAnalytics } from "@/contexts";
+import { NativeBannerAd, HorizontalBannerAd } from "@/components/ads";
 
 export default function HomePage() {
   const [featuredImages, setFeaturedImages] = useState<WaifuImage[]>([]);
@@ -22,11 +28,15 @@ export default function HomePage() {
   useEffect(() => {
     async function loadFeaturedImages() {
       try {
-        const images = await fetchImagesFromCategories('sfw', FEATURED_CATEGORIES, 5);
+        const images = await fetchImagesFromCategories(
+          "sfw",
+          FEATURED_CATEGORIES,
+          5,
+        );
         const enhanced = enhanceImagesWithAI(images);
         setFeaturedImages(shuffleArray(enhanced));
       } catch (error) {
-        console.error('Failed to load featured images:', error);
+        console.error("Failed to load featured images:", error);
       } finally {
         setLoading(false);
       }
@@ -38,24 +48,27 @@ export default function HomePage() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative overflow-hidden py-20 md:py-32">
+      <section className="relative overflow-hidden py-12 sm:py-20 md:py-32">
         {/* Background gradient */}
         <div className="absolute inset-0 bg-gradient-to-br from-pink-100 via-purple-50 to-indigo-100 dark:from-pink-950/30 dark:via-purple-950/20 dark:to-indigo-950/30" />
-        
+
         {/* Animated background shapes */}
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute -top-40 -right-40 w-80 h-80 bg-pink-400/30 dark:bg-pink-500/10 rounded-full blur-3xl animate-pulse" />
-          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-400/30 dark:bg-purple-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+          <div
+            className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-400/30 dark:bg-purple-500/10 rounded-full blur-3xl animate-pulse"
+            style={{ animationDelay: "1s" }}
+          />
         </div>
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6">
+            <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold mb-4 sm:mb-6">
               <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 bg-clip-text text-transparent">
                 Waifu Gallery
               </span>
             </h1>
-            <p className="text-lg md:text-xl text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto mb-8">
+            <p className="text-base sm:text-lg md:text-xl text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto mb-6 sm:mb-8 px-2">
               Discover beautiful anime-style images with AI-powered search,
               personalized recommendations, and infinite exploration.
             </p>
@@ -69,17 +82,17 @@ export default function HomePage() {
             </div>
 
             {/* Quick Actions */}
-            <div className="flex flex-wrap items-center justify-center gap-4">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
               <Link
                 href="/gallery"
-                className="btn-primary text-lg px-8 py-3"
+                className="btn-primary text-base sm:text-lg px-6 sm:px-8 py-3 w-full sm:w-auto text-center"
               >
                 <span>🖼️</span>
                 Browse Gallery
               </Link>
               <Link
                 href="/search"
-                className="btn-secondary text-lg px-8 py-3"
+                className="btn-secondary text-base sm:text-lg px-6 sm:px-8 py-3 w-full sm:w-auto text-center"
               >
                 <span>🔍</span>
                 Advanced Search
@@ -90,9 +103,9 @@ export default function HomePage() {
           {/* Stats */}
           <div className="grid grid-cols-3 gap-4 max-w-lg mx-auto mb-12">
             {[
-              { value: '31', label: 'Categories' },
-              { value: '∞', label: 'Images' },
-              { value: 'AI', label: 'Powered' },
+              { value: "31", label: "Categories" },
+              { value: "∞", label: "Images" },
+              { value: "AI", label: "Powered" },
             ].map((stat) => (
               <div
                 key={stat.label}
@@ -113,6 +126,8 @@ export default function HomePage() {
       {/* Featured Categories */}
       <section className="py-16 bg-zinc-50 dark:bg-zinc-900/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Native Banner Ad - after hero, before categories */}
+          <NativeBannerAd />
           <div className="text-center mb-10">
             <h2 className="text-2xl md:text-3xl font-bold text-zinc-900 dark:text-white mb-2">
               Explore Categories
@@ -122,14 +137,26 @@ export default function HomePage() {
             </p>
           </div>
           <CategoryShowcase categories={FEATURED_CATEGORIES} />
+          {/* Desktop horizontal banner below categories */}
+          <HorizontalBannerAd id="home-below-categories" />
           <div className="text-center mt-8">
             <Link
               href="/gallery"
               className="inline-flex items-center gap-2 text-pink-500 hover:text-pink-600 font-medium transition-colors"
             >
               View all 31 categories
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
               </svg>
             </Link>
           </div>
@@ -156,12 +183,22 @@ export default function HomePage() {
               className="hidden md:inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-pink-100 dark:hover:bg-pink-900/30 transition-colors"
             >
               See more
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
               </svg>
             </Link>
           </div>
-          
+
           <ImageGallery
             images={featuredImages}
             loading={loading}
@@ -186,43 +223,49 @@ export default function HomePage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
               {
-                icon: '🧠',
-                title: 'AI-Powered Search',
-                description: 'Search naturally with phrases like "cute smiling catgirl" and let AI find the best matches.',
+                icon: "🧠",
+                title: "AI-Powered Search",
+                description:
+                  'Search naturally with phrases like "cute smiling catgirl" and let AI find the best matches.',
               },
               {
-                icon: '🎨',
-                title: '31 Categories',
-                description: 'From waifus to nekos, hugs to dances - explore a wide variety of anime image categories.',
+                icon: "🎨",
+                title: "31 Categories",
+                description:
+                  "From waifus to nekos, hugs to dances - explore a wide variety of anime image categories.",
               },
               {
-                icon: '♾️',
-                title: 'Infinite Scroll',
-                description: 'Endless images with smart duplicate prevention. Never see the same image twice.',
+                icon: "♾️",
+                title: "Infinite Scroll",
+                description:
+                  "Endless images with smart duplicate prevention. Never see the same image twice.",
               },
               {
-                icon: '❤️',
-                title: 'Favorites Collection',
-                description: 'Save your favorite images and access them anytime. Export and share your collection.',
+                icon: "❤️",
+                title: "Favorites Collection",
+                description:
+                  "Save your favorite images and access them anytime. Export and share your collection.",
               },
               {
-                icon: '🌙',
-                title: 'Dark Mode',
-                description: 'Easy on the eyes with beautiful light and dark themes. Automatically follows your system.',
+                icon: "🌙",
+                title: "Dark Mode",
+                description:
+                  "Easy on the eyes with beautiful light and dark themes. Automatically follows your system.",
               },
               {
-                icon: '📱',
-                title: 'PWA Support',
-                description: 'Install as an app on any device. Works offline with cached images.',
+                icon: "📱",
+                title: "PWA Support",
+                description:
+                  "Install as an app on any device. Works offline with cached images.",
               },
             ].map((feature) => (
               <div
                 key={feature.title}
                 className={cn(
-                  'p-6 rounded-2xl',
-                  'bg-white dark:bg-zinc-800',
-                  'border border-zinc-200 dark:border-zinc-700',
-                  'transition-all duration-300 hover:shadow-xl hover:-translate-y-1'
+                  "p-6 rounded-2xl",
+                  "bg-white dark:bg-zinc-800",
+                  "border border-zinc-200 dark:border-zinc-700",
+                  "transition-all duration-300 hover:shadow-xl hover:-translate-y-1",
                 )}
               >
                 <span className="text-4xl mb-4 block">{feature.icon}</span>
@@ -245,16 +288,23 @@ export default function HomePage() {
             Ready to Explore?
           </h2>
           <p className="text-lg text-zinc-600 dark:text-zinc-400 mb-8">
-            Dive into the infinite world of beautiful anime images.
-            Start your journey now!
+            Dive into the infinite world of beautiful anime images. Start your
+            journey now!
           </p>
-          <Link
-            href="/gallery"
-            className="btn-primary text-lg px-10 py-4"
-          >
+          <Link href="/gallery" className="btn-primary text-lg px-10 py-4">
             Start Exploring
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M13 7l5 5m0 0l-5 5m5-5H6"
+              />
             </svg>
           </Link>
         </div>
