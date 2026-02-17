@@ -1,6 +1,7 @@
 "use client";
 
 import Script from "next/script";
+import { useEffect, useState } from "react";
 import { ADS_CONFIG } from "@/lib/ads.config";
 
 interface HorizontalBannerAdProps {
@@ -8,11 +9,20 @@ interface HorizontalBannerAdProps {
 }
 
 export function HorizontalBannerAd({ id }: HorizontalBannerAdProps) {
-  if (!ADS_CONFIG.enabled || !ADS_CONFIG.horizontalBanner.enabled) return null;
+  const [shouldLoad, setShouldLoad] = useState(false);
+
+  useEffect(() => {
+    if (!ADS_CONFIG.enabled || !ADS_CONFIG.horizontalBanner.enabled) return;
+    // Only on md+ (768px+) — 468px banner breaks mobile layout
+    if (window.innerWidth < 768) return;
+    setShouldLoad(true);
+  }, []);
+
+  // Don't render anything on mobile — scripts won't load at all
+  if (!shouldLoad) return null;
 
   return (
-    // Show on md+ (768px+) where 468px fits comfortably
-    <div className="hidden md:flex flex-col items-center py-4">
+    <div className="flex flex-col items-center py-4">
       <p className="text-xs text-zinc-400 mb-2">Advertisement</p>
       <div style={{ width: 468, height: 60 }}>
         <Script

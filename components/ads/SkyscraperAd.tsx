@@ -1,14 +1,24 @@
 "use client";
 
 import Script from "next/script";
+import { useEffect, useState } from "react";
 import { ADS_CONFIG } from "@/lib/ads.config";
 
 export function SkyscraperAd() {
-  if (!ADS_CONFIG.enabled || !ADS_CONFIG.skyscraper.enabled) return null;
+  const [shouldLoad, setShouldLoad] = useState(false);
+
+  useEffect(() => {
+    if (!ADS_CONFIG.enabled || !ADS_CONFIG.skyscraper.enabled) return;
+    // Only on xl+ (1280px) — sidebar needs enough room
+    if (window.innerWidth < 1280) return;
+    setShouldLoad(true);
+  }, []);
+
+  // Don't render anything on mobile/tablet — scripts won't load at all
+  if (!shouldLoad) return null;
 
   return (
-    // Completely hidden on mobile and tablet — xl+ only (1280px)
-    <div className="hidden xl:block sticky top-20">
+    <div className="sticky top-20">
       <p className="text-xs text-zinc-400 text-center mb-2">Advertisement</p>
       <div style={{ width: 160, height: 600 }}>
         <Script
