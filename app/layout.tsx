@@ -74,6 +74,9 @@ export const metadata: Metadata = {
     title: "Waifu Gallery",
     statusBarStyle: "default",
   },
+  verification: {
+    google: "cqf_OvnUX_qQWLcZ95rtDyswGMpmK0Jgu_-gx-_R8Wk",
+  },
 };
 
 export const viewport: Viewport = {
